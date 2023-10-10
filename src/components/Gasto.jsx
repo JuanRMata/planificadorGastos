@@ -11,7 +11,8 @@ import IconoSuscripciones from "../img/icono_suscripciones.svg"
 
 const Gasto = ({gasto}) => {
     const {categoria, nombre, cantidad, id,fecha} = gasto
-    const diccionarioIconos = {
+
+    const diccionarioIconos = { //En este diccionario ocupamos poner a fuerza el nombre exacto de la categoria que tiene el value de la seleccion, en este caso esta en Modal y cada value del selection
         ahorro : IconoAhorro,
         comida : IconoComida,
         casa : IconoCasa,
@@ -28,7 +29,8 @@ const Gasto = ({gasto}) => {
             {/* Agregando imagen */}
 
             <img
-
+                src={diccionarioIconos[categoria]}
+                alt="Icono gasto"
             
             />
 
