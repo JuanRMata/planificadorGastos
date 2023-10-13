@@ -2,11 +2,15 @@ import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Modal from "./components/Modal";
 import ListadoGastos from "./components/ListadoGastos";
+import Filtros from "./components/Filtros";
 import { generarId } from "./helpers"; //Aqui estamos importando un archivo previamente generado para tener una funcion, se importa el nombre de la funcion y como la carpeta solo tiene un archivo, solo se pone el nombre de la carpeta
 import IconoNuevoGasto from "./img/nuevo-gasto.svg";
 
+
 function App() {
-  const [gastos, setGastos] = useState([]);
+  const [gastos, setGastos] = useState(
+    localStorage.getItem(('gastos')) ? JSON.parse(localStorage.getItem('gastos')) : []
+  );
 
   const [presupuesto, setPresupuesto] = useState(
     localStorage.getItem('presupuesto') ?? 0 // Aqui estamos especificando que tome el valor que esta en el localStorage, en caso de no tener uno (??) el valor va a ser 0
@@ -18,7 +22,9 @@ function App() {
 
   const [gastoEditar, setGastoEditar] = useState({});
 
+  const [filtro,setFiltro] = useState('')
 
+  const [gastosFiltrados, setGastosFiltrados] = useState([])
 
   useEffect(() => {
     Number(localStorage.setItem('presupuesto', presupuesto ?? 0)) // 'presupuesto' es el nombre de la variable del localStorage
@@ -32,7 +38,7 @@ function App() {
   },[])
 
   useEffect(() => {
-    Number(localStorage.setItem('gastos', JSON.stringify(gastos) ?? [])) // 'presupuesto' es el nombre de la variable del localStorage
+    localStorage.setItem('gastos', JSON.stringify(gastos) ?? []) // 'presupuesto' es el nombre de la variable del localStorage
   },[gastos])
 
 
@@ -80,6 +86,13 @@ function App() {
     setGastos(gastosActualizados)
   }
 
+  useEffect(() => {
+    if(filtro) {
+      const gastosFiltrados = gastos.filter(gasto => gasto.categoria === filtro)
+      setGastosFiltrados(gastosFiltrados)
+    }
+  },[filtro])
+
   return (
     <div className={modal ? "fijar" : ""}>
       <Header
@@ -92,10 +105,17 @@ function App() {
       {isValidPresupuesto && (
         <>
           <main>
+            <Filtros
+              filtro={filtro}
+              setFiltro={setFiltro}
+            />
+
             <ListadoGastos 
             gastos={gastos} 
             setGastoEditar={setGastoEditar}
             eliminarGasto={eliminarGasto} 
+            gastosFiltrados={gastosFiltrados}
+            filtro={filtro}
             />
           </main>
           <div className="nuevo-gasto">
